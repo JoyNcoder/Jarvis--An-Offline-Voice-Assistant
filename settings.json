@@ -1,0 +1,11 @@
+{
+  "voice": "q_eponine",
+  "accent": "#38bdf8",
+  "reply_length": "short",
+  "speech_speed": 1.1,
+  "silence_threshold": 0.9,
+  "compact_always_on_top": true,
+  "start_in_compact": false,
+  "speech_threshold": 0.5,
+  "model_name": "qwen3:8b"
+}

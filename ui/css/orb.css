@@ -1,0 +1,168 @@
+/* The Jarvis orb. Built once by js/orb.js, restyled per state through custom
+   properties on `.orb[data-state]`. Design box is 200x200, scaled by --k.
+
+   Smooth state changes:
+   - the properties below are registered with @property, so the browser fades them between states;
+   - the spin speeds and the core pulse are driven by js/orb.js, which eases their speed. */
+
+@property --c        { syntax: '<color>';  inherits: true; initial-value: #22d3ee; }
+@property --hi1      { syntax: '<color>';  inherits: true; initial-value: #cffafe; }
+@property --dark     { syntax: '<color>';  inherits: true; initial-value: #0b4a5a; }
+@property --outer-op { syntax: '<number>'; inherits: true; initial-value: .55; }
+@property --tick-op  { syntax: '<number>'; inherits: true; initial-value: .3; }
+@property --halo-op  { syntax: '<number>'; inherits: true; initial-value: .18; }
+@property --rin-op   { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --rout-op  { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --bars-op  { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --sweep-op { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --orbit-op { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --mic-op   { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --alert-op { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --inner-op { syntax: '<number>'; inherits: true; initial-value: 1; }
+@property --level    { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --glow1    { syntax: '<length>'; inherits: true; initial-value: 26px; }
+@property --glow2    { syntax: '<length>'; inherits: true; initial-value: 56px; }
+
+@keyframes spinCW  { to { transform: rotate(360deg); } }
+@keyframes flicker {
+  0%, 100% { opacity: 1; } 8% { opacity: .35; } 14% { opacity: 1; }
+  52% { opacity: .9; } 58% { opacity: .25; } 64% { opacity: 1; }
+}
+@keyframes ripple { 0% { transform: scale(1); opacity: .75; } 100% { transform: scale(2.5); opacity: 0; } }
+@keyframes bar {
+  0%, 100% { transform: scaleY(var(--lo)); }
+  25% { transform: scaleY(var(--hi)); }
+  50% { transform: scaleY(calc(var(--lo) + (var(--hi) - var(--lo)) * .35)); }
+  75% { transform: scaleY(calc(var(--hi) * .8)); }
+}
+
+.orb {
+  /* idle (default) */
+  --c: var(--accent); --hi1: #cffafe; --dark: #0b4a5a; --level: 0;
+  --outer-op: .55; --outer-style: dashed; --tick-op: .3;
+  --glow1: 26px; --glow2: 56px; --halo-op: .18;
+  --rin-op: 0; --rout-op: 0; --sweep-op: 0; --bars-op: 0; --orbit-op: 0;
+  --mic-op: 0; --alert-op: 0; --inner-op: 1;
+
+  position: relative; flex: none;
+  width: var(--size, 200px); height: var(--size, 200px);
+
+  /* every state change fades over about half a second */
+  transition: --c .8s ease, --hi1 .8s ease, --dark .8s ease,
+              --outer-op .7s ease, --tick-op .7s ease, --halo-op .7s ease,
+              --rin-op .6s ease, --rout-op .6s ease, --bars-op .6s ease,
+              --sweep-op .6s ease, --orbit-op .5s ease,
+              --mic-op .5s ease, --alert-op .5s ease, --inner-op .6s ease,
+              --glow1 .7s ease, --glow2 .7s ease, --level .12s linear;
+}
+.orb-stage {
+  position: absolute; left: 0; top: 0; width: 200px; height: 200px;
+  transform: scale(var(--k, 1)); transform-origin: 0 0;
+}
+.orb-stage > * { position: absolute; pointer-events: none; }
+
+.o-halo {
+  left: -30px; top: -30px; width: 260px; height: 260px; border-radius: 50%;
+  background: radial-gradient(circle, var(--c) 0%, transparent 66%);
+  opacity: calc(var(--halo-op) + var(--level) * .25);
+  transform: scale(var(--halo-s, 1));
+}
+.o-outer {
+  inset: 0; border-radius: 50%;
+  border: 1px var(--outer-style) color-mix(in srgb, var(--c) 60%, transparent);
+  opacity: var(--outer-op);
+  transform: rotate(var(--rot-outer, 0deg));
+}
+.o-ticks {
+  inset: 8px; border-radius: 50%; opacity: calc(var(--tick-op) + var(--level) * .3);
+  background: repeating-conic-gradient(var(--c) 0deg 1.2deg, transparent 1.2deg 7.5deg);
+  -webkit-mask: radial-gradient(circle, transparent 64%, #000 65%, #000 71%, transparent 72%);
+          mask: radial-gradient(circle, transparent 64%, #000 65%, #000 71%, transparent 72%);
+  transform: rotate(var(--rot-ticks, 0deg));
+}
+.o-arc {
+  inset: 24px; border-radius: 50%; border: 3px solid transparent;
+  border-top-color: var(--c);
+  border-bottom-color: color-mix(in srgb, var(--c) 35%, transparent);
+  transform: rotate(var(--rot-arc, 0deg));
+}
+/* radar sweep: listening only */
+.o-sweep {
+  inset: 30px; border-radius: 50%; opacity: calc(var(--sweep-op) * (.7 + var(--level) * .3));
+  background: conic-gradient(from 0deg, transparent 0deg, transparent 240deg,
+              color-mix(in srgb, var(--c) 50%, transparent) 350deg, var(--c) 360deg);
+  -webkit-mask: radial-gradient(circle closest-side, transparent 52%, #000 58%);
+          mask: radial-gradient(circle closest-side, transparent 52%, #000 58%);
+  animation: spinCW 1.8s linear infinite;
+}
+.o-inner { inset: 42px; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--c) 40%, transparent); opacity: var(--inner-op); }
+
+.o-orbit { inset: 12px; opacity: var(--orbit-op); animation: spinCW 2.2s linear infinite; }
+.o-orbit i {
+  position: absolute; left: 84px; top: -4px; width: 8px; height: 8px; border-radius: 50%;
+  background: #fff; box-shadow: 0 0 10px var(--c), 0 0 22px var(--c);
+}
+
+/* two ripple sets, one flowing inward (listening) and one outward (speaking), so they can cross-fade */
+.o-ripples { inset: 0; }
+.o-ripples.in  { --rd: 1.7s; opacity: calc(var(--rin-op)  * (.45 + var(--level) * .55)); }
+.o-ripples.out { --rd: 1.8s; opacity: calc(var(--rout-op) * (.45 + var(--level) * .55)); }
+.o-ripples i {
+  position: absolute; inset: 62px; border-radius: 50%; border: 1px solid var(--c);
+  animation: ripple var(--rd) ease-out infinite;
+}
+.o-ripples.in i { animation-direction: reverse; }
+.o-ripples i:nth-child(2) { animation-delay: calc(var(--rd) * -.3333); }
+.o-ripples i:nth-child(3) { animation-delay: calc(var(--rd) * -.6667); }
+
+/* circular equalizer: speaking */
+.o-bars { inset: 0; opacity: var(--bars-op); }
+.o-bars .sb { position: absolute; inset: 0; transform: rotate(var(--a)); }
+.o-bars .sb i {
+  position: absolute; left: 98.5px; top: 30px; width: 3px; height: 24px; border-radius: 2px;
+  transform-origin: 50% 100%;
+  background: linear-gradient(to top, color-mix(in srgb, var(--c) 70%, transparent), #fff);
+  box-shadow: 0 0 6px var(--c);
+  --lo: .18; --hi: calc(.55 + var(--level) * .45);
+  animation: bar var(--t) ease-in-out var(--d) infinite;
+}
+
+.o-core {
+  inset: 62px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--hi1) 0%, var(--c) 46%, var(--dark) 100%);
+  box-shadow: 0 0 var(--glow1) color-mix(in srgb, var(--c) 70%, transparent),
+              0 0 var(--glow2) color-mix(in srgb, var(--c) 32%, transparent);
+  transform: scale(var(--core-s, .8));
+}
+.o-icon { inset: 62px; display: grid; place-items: center; }
+.o-icon svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; }
+.o-mic   { opacity: var(--mic-op);   color: #dbe6ea; }
+.o-alert { opacity: var(--alert-op); color: #fff3ec; }
+
+/* ---- states (js/orb.js eases the spin speeds and pulse for each one) ---- */
+.orb[data-state="listening"] {
+  --outer-op: .85; --tick-op: .6; --glow1: 36px; --glow2: 80px; --halo-op: .36;
+  --rin-op: 1; --sweep-op: .85;
+}
+.orb[data-state="thinking"] {
+  --outer-op: .75; --tick-op: .55; --glow1: 30px; --glow2: 66px; --halo-op: .26;
+  --orbit-op: 1;
+}
+.orb[data-state="speaking"] {
+  --outer-op: .85; --tick-op: .65; --glow1: 44px; --glow2: 100px; --halo-op: .4;
+  --rout-op: .55; --bars-op: 1; --inner-op: 0;
+}
+.orb[data-state="paused"] {
+  --c: var(--slate); --hi1: #c9d6dc; --dark: #1b2a31;
+  --outer-op: .4; --tick-op: .22; --glow1: 8px; --glow2: 20px; --halo-op: .08; --mic-op: 1;
+}
+.orb[data-state="error"] {
+  --c: var(--error); --hi1: #ffe3d6; --dark: #5c1d0a; --outer-style: dotted;
+  --outer-op: .7; --tick-op: .35; --glow1: 34px; --glow2: 72px; --halo-op: .30; --alert-op: 1;
+}
+.orb[data-state="error"] .o-core { animation: flicker 2.4s ease-in-out infinite; }
+
+/* Reduced motion: no rotation (js/orb.js), no sweep or orbit. */
+@media (prefers-reduced-motion: reduce) {
+  .orb .o-sweep, .orb .o-orbit { animation: none; }
+}

@@ -1,0 +1,36 @@
+# Environment and caches
+.venv/
+__pycache__/
+*.pyc
+wheels/
+installers/
+
+# Models and large binaries
+models/
+kokoro-v1.0.onnx
+voices-v1.0.bin
+silero_vad.onnx
+voices/
+*.safetensors
+*.wav
+
+# Personal data and logs
+jarvis_brain.db
+jarvis_brain.db-wal
+jarvis_brain.db-shm
+jarvis_log.txt
+unmatched_commands.txt
+system_errors.log
+custom_locations.json
+
+# Old copies
+JARVIS BACKUP*/
+old versions/
+phase */
+most stable versions/
+WORKING VERSION/
+development/
+
+# Windows
+desktop.ini
+Thumbs.db

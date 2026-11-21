@@ -1,0 +1,52 @@
+/* Jarvis UI design tokens.
+   One committed dark look: cyan HUD palette on frosted glass.
+   Fonts: drop the .woff2 files into ui/fonts/ (see ui/README.txt). Until then the
+   stack falls back to the dev Google Fonts link in index.html, then to system fonts. */
+
+@font-face { font-family: 'Jarvis Display'; font-weight: 500; font-display: swap;
+  src: local('Chakra Petch Medium'), local('ChakraPetch-Medium'), url('../fonts/ChakraPetch-Medium.woff2') format('woff2'); }
+@font-face { font-family: 'Jarvis Display'; font-weight: 600; font-display: swap;
+  src: local('Chakra Petch SemiBold'), local('ChakraPetch-SemiBold'), url('../fonts/ChakraPetch-SemiBold.woff2') format('woff2'); }
+@font-face { font-family: 'Jarvis Body'; font-weight: 200 800; font-display: swap;
+  src: local('Manrope'), url('../fonts/Manrope-Variable.woff2') format('woff2'); }
+@font-face { font-family: 'Jarvis Mono'; font-weight: 400; font-display: swap;
+  src: local('JetBrains Mono'), local('JetBrainsMono-Regular'), url('../fonts/JetBrainsMono-Regular.woff2') format('woff2'); }
+
+:root {
+  color-scheme: dark;
+
+  /* colour */
+  --bg: #04080d;
+  --bg-hi: #0b1d2b;
+  --glass: rgba(5, 16, 24, 0.55);
+  --glass-border: rgba(34, 211, 238, 0.24);
+  --panel: rgba(255, 255, 255, 0.045);
+  --panel-border: rgba(34, 211, 238, 0.15);
+  --line: rgba(34, 211, 238, 0.14);
+  --accent: #22d3ee;
+  --on-accent: #031318;
+  --text: #eaf8fd;
+  --text-2: #cfe9f3;
+  --muted: #9fc4d4;
+  --dim: #8fb3c4;
+  --slate: #5f7f8d;
+  --error: #ff7a45;
+  --blob-1: #0e7490;
+  --blob-2: #155e75;
+  --blob-3: #22d3ee;
+
+  /* derived from the accent, so the accent setting restyles everything */
+  --accent-soft: color-mix(in srgb, var(--accent) 16%, transparent);
+  --accent-line: color-mix(in srgb, var(--accent) 45%, transparent);
+  --user-bubble: color-mix(in srgb, var(--accent) 22%, #081722);
+  --user-bubble-line: color-mix(in srgb, var(--accent) 34%, transparent);
+
+  /* type */
+  --font-display: 'Jarvis Display', 'Chakra Petch', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Jarvis Body', 'Manrope', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Jarvis Mono', 'JetBrains Mono', Consolas, 'Courier New', monospace;
+
+  /* shape */
+  --radius-window: 28px;
+  --radius-card: 20px;
+}
