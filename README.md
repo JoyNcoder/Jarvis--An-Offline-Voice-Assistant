@@ -102,7 +102,6 @@ From now on it works without internet.
 - **Windows privacy:** allow microphone access under Settings, Privacy & security, Microphone.
 - **Weak computer?** Switch the language model to `qwen3:4b-instruct` under **Settings, Preferences, Brain**.
 - **Voice:** the default is the Kokoro voice `af_heart`. Pick another one in Settings, Preferences.
-- **Shortcuts (optional):** to add spoken shortcuts to your own folders and apps, copy `custom_locations.example.json` to `custom_locations.json` and add entries like `{"project": "D:\\Jarvis"}`.
 
 ## Voice cloning (optional)
 
