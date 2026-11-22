@@ -411,6 +411,23 @@ command("pc_help", [
     r"(?:list|show|tell me)(?: all)?(?: your)? (?:pc|system) commands",
 ], lambda m: WindowsSystem.pc_help(m.groupdict().get("topic")))
 
+CAPABILITIES_TEXT = (
+    "I can chat and answer questions from what I know, tell the time and date, "
+    "do math and unit conversions, remember things about you and our past talks, "
+    "change my voice, and control your PC: apps, websites, volume, brightness, "
+    "windows, screenshots and power. I can open web searches in your browser, but I "
+    "can't read the results, set reminders, or play music. "
+    "Say what can you do on my PC for the PC commands, sir."
+)
+
+command("capabilities", [
+    r"what (?:tasks |things |else |all )?can you (?:do|help(?: me)?(?: with)?)",
+    r"what are your (?:abilities|capabilities|features|skills|functions)",
+    r"what do you do",
+    r"how can you help(?: me)?",
+    r"(?:list|tell me|show me) your (?:abilities|capabilities|features|skills)",
+], lambda m: CAPABILITIES_TEXT)
+
 _WIN = r"(?:the |this |my |current |active |focused )*window"
 
 command("window_minimize", [r"minimi[sz]e(?: " + _WIN + r")?"],

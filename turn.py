@@ -9,7 +9,7 @@ from events import emit
 from llm import qwen_worker
 import audio_in
 from tts import tts_worker, clean_for_speech
-from playback import player_worker, interrupt_monitor_worker
+from playback import player_worker, interrupt_monitor_worker, _active
 
 def save_database_message(conversation_id, role, content, route=None):
     """Save a message without allowing a database problem to crash Jarvis."""
@@ -32,7 +32,7 @@ def set_route(message_id, route):
     except Exception as error:
         print("Database route error:", error)
 
-_active = {"interrupt": None, "holder": None, "lock": None}
+
 
 def interrupt_current():
     """Stop Jarvis's current reply (used by the UI stop button)."""

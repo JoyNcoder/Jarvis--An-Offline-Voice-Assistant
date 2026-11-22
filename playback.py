@@ -13,6 +13,9 @@ from events import emit
 from tts import tts_worker, clean_for_speech
 from audio_in import MIC_DEVICE, emit_level, is_muted
 
+# The reply that is playing right now, so the UI stop button can cut it off.
+_active = {"interrupt": None, "holder": None, "lock": None}
+
 def player_worker(audio_q, interrupt_event, duck_event, playback_started,
                   playback_finished, t0, played):
 
@@ -237,6 +240,7 @@ def say_interruptible(text, vad, t0=None, label=None):
     response_lock = threading.Lock()
     interrupted_audio = []
     played = []
+    _active.update(interrupt=interrupt_event, holder=response_holder, lock=response_lock)
 
     threads = [
         threading.Thread(target=tts_worker,
@@ -263,4 +267,5 @@ def say_interruptible(text, vad, t0=None, label=None):
     for thread in threads:
         thread.join()
 
+    _active.update(interrupt=None, holder=None, lock=None)
     return (interrupted_audio[0] if interrupted_audio else None), " ".join(played).strip()
